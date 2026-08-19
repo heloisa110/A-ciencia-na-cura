@@ -1,215 +1,151 @@
-// Script JavaScript - Código de Cura
+// Código JavaScript simplificado e à prova de falhas
 
-document.addEventListener('DOMContentLoaded', () => {
+// 1. ATUALIZAÇÃO DO SLIDER
+const slider = document.getElementById('antibody-slider');
+const sliderVal = document.getElementById('slider-val');
 
-    // ==========================================
-    // 1. SIMULADOR DE RESPOSTA IMUNOLÓGICA (CANVAS)
-    // ==========================================
-    const canvas = document.getElementById('immuneCanvas');
-    const ctx = canvas.getContext('2d');
-    const btnSimulate = document.getElementById('btn-simulate');
-    const antibodySlider = document.getElementById('antibody-level');
-    const antibodyValDisplay = document.getElementById('antibody-val');
-    const treatmentSelect = document.getElementById('treatment-type');
-    const statusText = document.getElementById('simulation-status');
-    const healthBar = document.getElementById('health-bar');
-
-    let particles = [];
-    let simulationRunning = false;
-    let animationFrameId;
-    let health = 100;
-
-    // Atualiza texto do slider
-    antibodySlider.addEventListener('input', (e) => {
-        antibodyValDisplay.textContent = `${e.target.value}%`;
-    });
-
-    class Particle {
-        constructor(type) {
-            this.type = type; // 'pathogen' ou 'antibody'
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.radius = type === 'pathogen' ? 6 : 4;
-            this.speedX = (Math.random() - 0.5) * (type === 'pathogen' ? 2 : 3);
-            this.speedY = (Math.random() - 0.5) * (type === 'pathogen' ? 2 : 3);
-            this.active = true;
-        }
-
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-
-            // Rebatimento nas bordas
-            if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-            if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-        }
-
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            ctx.fillStyle = this.type === 'pathogen' ? '#f43f5e' : '#38bdf8';
-            ctx.fill();
-            ctx.closePath();
-        }
-    }
-
-    function initSimulation() {
-        particles = [];
-        health = 100;
-        updateHealthBar();
-
-        const antibodyCount = parseInt(antibodySlider.value);
-        const treatment = treatmentSelect.value;
-        let pathogenCount = 40;
-
-        // Ajustes baseados no tratamento
-        let speedMultiplier = 1;
-        if (treatment === 'vaccine') {
-            pathogenCount = 25; // Menos patógenos inicias devido à memória imunológica
-        } else if (treatment === 'antibiotic') {
-            speedMultiplier = 1.5; // Anticorpos se movem mais rápido
-        }
-
-        // Criar Patógenos
-        for (let i = 0; i < pathogenCount; i++) {
-            particles.push(new Particle('pathogen'));
-        }
-
-        // Criar Anticorpos
-        for (let i = 0; i < antibodyCount; i++) {
-            let p = new Particle('antibody');
-            p.speedX *= speedMultiplier;
-            p.speedY *= speedMultiplier;
-            particles.push(p);
-        }
-
-        simulationRunning = true;
-        statusText.textContent = "Combate imunológico em andamento...";
-        statusText.style.color = "#38bdf8";
-
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        animate();
-    }
-
-    function animate() {
-        if (!simulationRunning) return;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        let pathogens = particles.filter(p => p.type === 'pathogen' && p.active);
-        let antibodies = particles.filter(p => p.type === 'antibody' && p.active);
-
-        // Checar colisões entre anticorpos e patógenos
-        antibodies.forEach(ab => {
-            pathogens.forEach(pt => {
-                if (ab.active && pt.active) {
-                    const dist = Math.hypot(ab.x - pt.x, ab.y - pt.y);
-                    if (dist < ab.radius + pt.radius + 2) {
-                        // Anticorpo neutraliza o patógeno
-                        pt.active = false;
-                        ab.active = false;
-                    }
-                }
-            });
-        });
-
-        // Dano à saúde se houver patógenos ativos acumulados
-        if (pathogens.length > 0) {
-            health -= pathogens.length * 0.05;
-            if (health < 0) health = 0;
-            updateHealthBar();
-        }
-
-        // Desenhar e atualizar partículas ativas
-        particles.forEach(p => {
-            if (p.active) {
-                p.update();
-                p.draw();
-            }
-        });
-
-        // Condições de término
-        if (pathogens.length === 0) {
-            simulationRunning = false;
-            statusText.textContent = "Sucesso! O sistema imunológico neutralizou a ameaça.";
-            statusText.style.color = "#10b981";
-        } else if (health <= 0) {
-            simulationRunning = false;
-            statusText.textContent = "Infecção severa! A resposta imunológica foi insuficiente.";
-            statusText.style.color = "#f43f5e";
-        } else {
-            animationFrameId = requestAnimationFrame(animate);
-        }
-    }
-
-    function updateHealthBar() {
-        healthBar.style.width = `${Math.max(0, Math.round(health))}%`;
-        healthBar.textContent = `${Math.max(0, Math.round(health))}% Saúde`;
-        if (health < 30) {
-            healthBar.style.backgroundColor = '#f43f5e';
-        } else if (health < 70) {
-            healthBar.style.backgroundColor = '#f59e0b';
-        } else {
-            healthBar.style.backgroundColor = '#10b981';
-        }
-    }
-
-    btnSimulate.addEventListener('click', initSimulation);
-
-
-    // ==========================================
-    // 2. LINHA DO TEMPO INTERATIVA
-    // ==========================================
-    const timelineData = {
-        "1928": {
-            title: "1928 — A Descoberta da Penicilina",
-            desc: "Alexander Fleming descobre acidentalmente a penicilina ao observar que o fungo Penicillium notatum inibia o crescimento bacteriano, dando início à era dos antibióticos.",
-            impact: "Impacto: Salva milhões de vidas e revoluciona o tratamento de infecções."
-        },
-        "1953": {
-            title: "1953 — A Estrutura da Dupla Hélice do DNA",
-            desc: "James Watson, Francis Crick e Rosalind Franklin revelam a estrutura em dupla hélice do DNA, abrindo portas para a biologia molecular moderna.",
-            impact: "Impacto: Permite entender a base genética das doenças e o desenvolvimento de bioterapias."
-        },
-        "1978": {
-            title: "1978 — Produção de Insulina Recombinante",
-            desc: "Cientistas conseguem sintetizar insulina humana utilizando bactérias modificadas geneticamente via tecnologia de DNA recombinante.",
-            impact: "Impacto: Início dos medicamentos biológicos e síntese de hormônios seguros."
-        },
-        "2020": {
-            title: "2020 — Era das Vacinas de RNA Mensageiro (mRNA)",
-            desc: "Aprovação e uso em escala global de vacinas de RNAm, que instruem as próprias células do corpo a produzir proteínas defensivas.",
-            impact: "Impacto: Nova fronteira para tratamento de vírus, câncer e doenças autoimunes."
-        }
-    };
-
-    const timelineBtns = document.querySelectorAll('.timeline-btn');
-    const titleEl = document.getElementById('timeline-title');
-    const descEl = document.getElementById('timeline-desc');
-    const impactEl = document.getElementById('timeline-impact');
-
-    timelineBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Remove active class
-            timelineBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            const year = btn.getAttribute('data-year');
-            const data = timelineData[year];
-
-            if (data) {
-                titleEl.textContent = data.title;
-                descEl.textContent = data.desc;
-                impactEl.textContent = data.impact;
-            }
-        });
-    });
-
-    // Inicialização do Canvas com tela limpa
-    ctx.fillStyle = '#090d16';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '14px Inter, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('Clique em "Iniciar Simulação" para começar', canvas.width / 2, canvas.height / 2);
+slider.addEventListener('input', function() {
+    sliderVal.textContent = slider.value + '%';
 });
+
+// 2. SIMULADOR COM CANVAS
+const canvas = document.getElementById('simCanvas');
+const ctx = canvas.getContext('2d');
+const startBtn = document.getElementById('start-btn');
+const statusText = document.getElementById('status-text');
+const treatmentSelect = document.getElementById('treatment-select');
+
+let particles = [];
+let animId = null;
+
+class Particle {
+    constructor(type) {
+        this.type = type; // 'pathogen' (vermelho) ou 'antibody' (azul)
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 3;
+        this.vy = (Math.random() - 0.5) * 3;
+        this.radius = type === 'pathogen' ? 6 : 4;
+        this.active = true;
+    }
+
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    }
+
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.type === 'pathogen' ? '#f43f5e' : '#38bdf8';
+        ctx.fill();
+        ctx.closePath();
+    }
+}
+
+function startSimulation() {
+    particles = [];
+    const immunity = parseInt(slider.value);
+    const treatment = treatmentSelect.value;
+
+    let pathogenCount = 30;
+    let antibodyCount = immunity;
+
+    if (treatment === 'vaccine') pathogenCount = 15;
+    if (treatment === 'meds') antibodyCount += 20;
+
+    for (let i = 0; i < pathogenCount; i++) {
+        particles.push(new Particle('pathogen'));
+    }
+
+    for (let i = 0; i < antibodyCount; i++) {
+        particles.push(new Particle('antibody'));
+    }
+
+    statusText.textContent = "Status: Combate em andamento...";
+    statusText.style.color = "#38bdf8";
+
+    if (animId) cancelAnimationFrame(animId);
+    runLoop();
+}
+
+function runLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let activePathogens = particles.filter(p => p.type === 'pathogen' && p.active);
+    let activeAntibodies = particles.filter(p => p.type === 'antibody' && p.active);
+
+    // Colisão
+    activeAntibodies.forEach(ab => {
+        activePathogens.forEach(pt => {
+            if (ab.active && pt.active) {
+                let dx = ab.x - pt.x;
+                let dy = ab.y - pt.y;
+                let dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < ab.radius + pt.radius) {
+                    ab.active = false;
+                    pt.active = false;
+                }
+            }
+        });
+    });
+
+    particles.forEach(p => {
+        if (p.active) {
+            p.update();
+            p.draw();
+        }
+    });
+
+    if (activePathogens.length === 0) {
+        statusText.textContent = "Status: Infecção debelada com sucesso!";
+        statusText.style.color = "#10b981";
+    } else if (activeAntibodies.length === 0 && activePathogens.length > 0) {
+        statusText.textContent = "Status: Anticorpos insuficientes!";
+        statusText.style.color = "#f43f5e";
+    } else {
+        animId = requestAnimationFrame(runLoop);
+    }
+}
+
+startBtn.addEventListener('click', startSimulation);
+
+// Desenho inicial do Canvas
+ctx.fillStyle = '#94a3b8';
+ctx.font = '14px Arial';
+ctx.textAlign = 'center';
+ctx.fillText('Clique em "Iniciar Simulação"', canvas.width / 2, canvas.height / 2);
+
+
+// 3. LINHA DO TEMPO
+const events = {
+    1928: {
+        title: "1928 — A Descoberta da Penicilina",
+        desc: "Alexander Fleming descobre acidentalmente a penicilina, abrindo caminho para o combate às infecções bacterianas com antibióticos."
+    },
+    1953: {
+        title: "1953 — A Estrutura do DNA",
+        desc: "A revelação da estrutura em dupla hélice do DNA por Watson, Crick e Franklin revolucionou a genômica e a medicina molecular."
+    },
+    1978: {
+        title: "1978 — Insulina Recombinante",
+        desc: "A primeira síntese de insulina humana em laboratório permitiu tratamentos seguros para milhões de diabéticos no mundo todo."
+    },
+    2020: {
+        title: "2020 — Vacinas de mRNA",
+        desc: "A criação rápida de vacinas com RNA mensageiro inaugurou uma nova era na imunização contra vírus e possíveis terapias contra o câncer."
+    }
+};
+
+function showEvent(year, btnElement) {
+    document.getElementById('event-title').textContent = events[year].title;
+    document.getElementById('event-desc').textContent = events[year].desc;
+
+    let buttons = document.querySelectorAll('.t-btn');
+    buttons.forEach(b => b.classList.remove('active'));
+    btnElement.classList.add('active');
+}

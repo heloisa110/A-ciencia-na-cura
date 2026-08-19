@@ -4,7 +4,218 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Código de Cura | A Ciência da Saúde</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background-color: #1e293b;
+            border-bottom: 1px solid #334155;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #38bdf8;
+        }
+
+        .navbar nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin-left: 1rem;
+        }
+
+        .navbar nav a:hover {
+            color: #ffffff;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem;
+            background-color: #1e293b;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            color: #38bdf8;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background-color: #1e293b;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #334155;
+        }
+
+        .card h2 {
+            color: #0d9488;
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+
+        /* Simulador */
+        .sim-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .controls {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .controls label {
+            display: block;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .controls input[type="range"], .controls select {
+            width: 100%;
+            margin-top: 0.3rem;
+            padding: 0.4rem;
+            background-color: #0f172a;
+            color: #fff;
+            border: 1px solid #334155;
+            border-radius: 4px;
+        }
+
+        .btn {
+            background-color: #0d9488;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background-color: #14b8a6;
+        }
+
+        .status {
+            margin-top: 1rem;
+            font-weight: bold;
+            color: #38bdf8;
+        }
+
+        .display {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+        }
+
+        #simCanvas {
+            background-color: #090d16;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* Linha do Tempo */
+        .timeline-nav {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .t-btn {
+            background-color: #0f172a;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .t-btn.active, .t-btn:hover {
+            background-color: #0d9488;
+            color: white;
+            border-color: #0d9488;
+        }
+
+        .event-box {
+            background-color: #0f172a;
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid #0d9488;
+        }
+
+        .event-box h3 {
+            color: #38bdf8;
+            margin-bottom: 0.3rem;
+        }
+
+        /* Grid Assuntos */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .grid-item {
+            background-color: #0f172a;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #334155;
+        }
+
+        .grid-item h3 {
+            font-size: 1rem;
+            margin-bottom: 0.4rem;
+            color: #f8fafc;
+        }
+
+        .grid-item p {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+    </style>
 </head>
 <body>
 
@@ -40,7 +251,7 @@
                     <label for="treatment-select">Tratamento Médico:</label>
                     <select id="treatment-select">
                         <option value="none">Nenhum</option>
-                        <option value="vaccine">Vacina Prevencional</option>
+                        <option value="vaccine">Vacina Preventiva</option>
                         <option value="meds">Medicamento Específico</option>
                     </select>
 
@@ -104,6 +315,155 @@
         <p>&copy; Código de Cura — A Ciência da Recuperação</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        // 1. ATUALIZAÇÃO DO SLIDER
+        const slider = document.getElementById('antibody-slider');
+        const sliderVal = document.getElementById('slider-val');
+
+        slider.addEventListener('input', function() {
+            sliderVal.textContent = slider.value + '%';
+        });
+
+        // 2. SIMULADOR COM CANVAS
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const startBtn = document.getElementById('start-btn');
+        const statusText = document.getElementById('status-text');
+        const treatmentSelect = document.getElementById('treatment-select');
+
+        let particles = [];
+        let animId = null;
+
+        class Particle {
+            constructor(type) {
+                this.type = type; // 'pathogen' (vermelho) ou 'antibody' (azul)
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 3;
+                this.vy = (Math.random() - 0.5) * 3;
+                this.radius = type === 'pathogen' ? 6 : 4;
+                this.active = true;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.type === 'pathogen' ? '#f43f5e' : '#38bdf8';
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        function startSimulation() {
+            particles = [];
+            const immunity = parseInt(slider.value);
+            const treatment = treatmentSelect.value;
+
+            let pathogenCount = 30;
+            let antibodyCount = immunity;
+
+            if (treatment === 'vaccine') pathogenCount = 15;
+            if (treatment === 'meds') antibodyCount += 20;
+
+            for (let i = 0; i < pathogenCount; i++) {
+                particles.push(new Particle('pathogen'));
+            }
+
+            for (let i = 0; i < antibodyCount; i++) {
+                particles.push(new Particle('antibody'));
+            }
+
+            statusText.textContent = "Status: Combate em andamento...";
+            statusText.style.color = "#38bdf8";
+
+            if (animId) cancelAnimationFrame(animId);
+            runLoop();
+        }
+
+        function runLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            let activePathogens = particles.filter(p => p.type === 'pathogen' && p.active);
+            let activeAntibodies = particles.filter(p => p.type === 'antibody' && p.active);
+
+            // Colisão
+            activeAntibodies.forEach(ab => {
+                activePathogens.forEach(pt => {
+                    if (ab.active && pt.active) {
+                        let dx = ab.x - pt.x;
+                        let dy = ab.y - pt.y;
+                        let dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < ab.radius + pt.radius) {
+                            ab.active = false;
+                            pt.active = false;
+                        }
+                    }
+                });
+            });
+
+            particles.forEach(p => {
+                if (p.active) {
+                    p.update();
+                    p.draw();
+                }
+            });
+
+            if (activePathogens.length === 0) {
+                statusText.textContent = "Status: Infecção debelada com sucesso!";
+                statusText.style.color = "#10b981";
+            } else if (activeAntibodies.length === 0 && activePathogens.length > 0) {
+                statusText.textContent = "Status: Anticorpos insuficientes!";
+                statusText.style.color = "#f43f5e";
+            } else {
+                animId = requestAnimationFrame(runLoop);
+            }
+        }
+
+        startBtn.addEventListener('click', startSimulation);
+
+        // Desenho inicial do Canvas
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '14px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Clique em "Iniciar Simulação"', canvas.width / 2, canvas.height / 2);
+
+        // 3. LINHA DO TEMPO
+        const events = {
+            1928: {
+                title: "1928 — A Descoberta da Penicilina",
+                desc: "Alexander Fleming descobre acidentalmente a penicilina, abrindo caminho para o combate às infecções bacterianas com antibióticos."
+            },
+            1953: {
+                title: "1953 — A Estrutura do DNA",
+                desc: "A revelação da estrutura em dupla hélice do DNA por Watson, Crick e Franklin revolucionou a genômica e a medicina molecular."
+            },
+            1978: {
+                title: "1978 — Insulina Recombinante",
+                desc: "A primeira síntese de insulina humana em laboratório permitiu tratamentos seguros para milhões de diabéticos no mundo todo."
+            },
+            2020: {
+                title: "2020 — Vacinas de mRNA",
+                desc: "A criação rápida de vacinas com RNA mensageiro inaugurou uma nova era na imunização contra vírus e possíveis terapias contra o câncer."
+            }
+        };
+
+        function showEvent(year, btnElement) {
+            document.getElementById('event-title').textContent = events[year].title;
+            document.getElementById('event-desc').textContent = events[year].desc;
+
+            let buttons = document.querySelectorAll('.t-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+        }
+    </script>
 </body>
 </html>

@@ -1,5 +1,3 @@
-// Código JavaScript simplificado e à prova de falhas
-
 // 1. ATUALIZAÇÃO DO SLIDER
 const slider = document.getElementById('antibody-slider');
 const sliderVal = document.getElementById('slider-val');
@@ -119,7 +117,6 @@ ctx.fillStyle = '#94a3b8';
 ctx.font = '14px Arial';
 ctx.textAlign = 'center';
 ctx.fillText('Clique em "Iniciar Simulação"', canvas.width / 2, canvas.height / 2);
-
 
 // 3. LINHA DO TEMPO
 const events = {

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Código de Cura | A Ciência da Regeneração e Medicina</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header / Navigation -->
+    <header class="navbar">
+        <div class="logo">
+            <span class="logo-icon">🧬</span>
+            <span class="logo-text">Código de <strong>Cura</strong></span>
+        </div>
+        <nav>
+            <a href="#simulador">Simulador</a>
+            <a href="#linha-do-tempo">Linha do Tempo</a>
+            <a href="#artigos">Artigos</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <span class="tag">Exploração Científica</span>
+            <h1>A Ciência por Trás da Recuperação do Corpo</h1>
+            <p>Descubra como a biologia molecular, as terapias gênicas e os mecanismos imunológicos do corpo humano trabalham em conjunto para regenerar tecidos e combater doenças.</p>
+            <a href="#simulador" class="btn-primary">Explorar Simulador</a>
+        </div>
+    </section>
+
+    <main class="container">
+
+        <!-- Interactive JavaScript Feature 1: Immunity Simulator -->
+        <section id="simulador" class="card-section">
+            <div class="section-header">
+                <h2>1. Simulador de Resposta Imunológica</h2>
+                <p>Ajuste os parâmetros biológicos para observar como o corpo combate uma infecção em tempo real.</p>
+            </div>
+
+            <div class="simulator-wrapper">
+                <div class="controls-panel">
+                    <div class="control-group">
+                        <label for="antibody-level">Nível de Anticorpos: <span id="antibody-val">50%</span></label>
+                        <input type="range" id="antibody-level" min="10" max="100" value="50">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="treatment-type">Tratamento Aplicado:</label>
+                        <select id="treatment-type">
+                            <option value="none">Nenhum (Apenas Imunidade Natural)</option>
+                            <option value="vaccine">Vacina Prévia (+Eficácia)</option>
+                            <option value="antibiotic">Terapia Antibiótica (+Velocidade)</option>
+                        </select>
+                    </div>
+
+                    <button id="btn-simulate" class="btn-action">Iniciar Simulação</button>
+                    
+                    <div class="status-box">
+                        <h4>Status do Organismo:</h4>
+                        <p id="simulation-status">Aguardando início da simulação...</p>
+                        <div class="progress-bar-container">
+                            <div id="health-bar" class="progress-bar" style="width: 100%;">100% Saúde</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="canvas-panel">
+                    <canvas id="immuneCanvas" width="450" height="300"></canvas>
+                    <div class="legend">
+                        <span class="legend-item"><span class="dot pathogen"></span> Patógeno</span>
+                        <span class="legend-item"><span class="dot antibody"></span> Anticorpo / Célula-T</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive JavaScript Feature 2: Timeline -->
+        <section id="linha-do-tempo" class="card-section">
+            <div class="section-header">
+                <h2>2. Linha do Tempo: A Era dos Medicamentos</h2>
+                <p>Clique nos marcos históricos para explorar a evolução das descobertas médicas.</p>
+            </div>
+
+            <div class="timeline-container">
+                <div class="timeline-buttons">
+                    <button class="timeline-btn active" data-year="1928">1928: Penicilina</button>
+                    <button class="timeline-btn" data-year="1953">1953: Estrutura do DNA</button>
+                    <button class="timeline-btn" data-year="1978">1978: Insulina Recombinante</button>
+                    <button class="timeline-btn" data-year="2020">2020: Vacinas de mRNA</button>
+                </div>
+
+                <div id="timeline-detail" class="timeline-detail-box">
+                    <h3 id="timeline-title">1928 — A Descoberta da Penicilina</h3>
+                    <p id="timeline-desc">Alexander Fleming descobre acidentalmente a penicilina ao observar que o fungo <em>Penicillium notatum</em> inibia o crescimento bacteriano, dando início à era dos antibióticos.</p>
+                    <span id="timeline-impact" class="impact-badge">Impacto: Redução maciça da mortalidade por infecções bacterianas.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Topics Section -->
+        <section id="artigos" class="card-section">
+            <div class="section-header">
+                <h2>Pilares da Ciência da Cura</h2>
+                <p>Os quatro eixos fundamentais que transformaram a medicina moderna.</p>
+            </div>
+
+            <div class="topics-grid">
+                <article class="topic-card">
+                    <div class="card-icon">💊</div>
+                    <h3>Evolução dos Medicamentos</h3>
+                    <p>Da observação botânica e sorte às terapias gênicas e biofármacos desenvolvidos com precisão atômica.</p>
+                </article>
+
+                <article class="topic-card">
+                    <div class="card-icon">🔬</div>
+                    <h3>Regeneração Celular</h3>
+                    <p>Como células-tronco e fatores de crescimento abrem caminhos para a regeneração de tecidos e órgãos lesados.</p>
+                </article>
+
+                <article class="topic-card">
+                    <div class="card-icon">🤖</div>
+                    <h3>Tecnologia & IA em Saúde</h3>
+                    <p>Diagnósticos precoce acurados por inteligência artificial e cirurgias robóticas minimamente invasivas.</p>
+                </article>
+
+                <article class="topic-card">
+                    <div class="card-icon">🫀</div>
+                    <h3>Saúde Integrativa</h3>
+                    <p>A influência comprovada do estilo de vida, nutrição e equilíbrio do estresse no fortalecimento imunológico.</p>
+                </article>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Código de Cura — A Ciência da Regeneração. Criado para fins demonstrativos.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
